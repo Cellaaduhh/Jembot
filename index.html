@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hefaistos Hades</title>
+  <style>
+    :root {
+      --primary: #a349f4;
+      --bg: #000000;
+      --card: #1a1a1a;
+      --input: #121212;
+      --border: #2a2a2a;
+      --text: #f0f0f0;
+      --danger: #a84444;
+    }
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: sans-serif;
+      display: flex; align-items: center; justify-content: center;
+      height: 100vh; overflow: hidden; position: relative;
+    }
+    #particles-js {
+      position: fixed; width: 100%; height: 100%; z-index: 0;
+    }
+    .container {
+      position: relative; z-index: 2;
+      background: var(--card);
+      padding: 30px 25px;
+      border-radius: 20px;
+      width: 90%; max-width: 380px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.03);
+      text-align: center;
+    }
+    .logout {
+      position: absolute; top: -12px; right: -12px;
+      background: var(--danger); color: white;
+      border: none; padding: 6px 14px;
+      font-size: 0.8rem;
+      border-radius: 10px; cursor: pointer;
+      z-index: 3;
+    }
+    h1 {
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%; padding: 12px;
+      background: var(--input); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text);
+      font-size: 0.95rem;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .btn-group {
+      display: flex; gap: 10px; margin-bottom: 20px;
+    }
+    .btn {
+      flex: 1;
+      background: var(--primary); color: white;
+      border: none; padding: 12px 0;
+      border-radius: 12px;
+      font-weight: bold; cursor: pointer;
+    }
+    .status {
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .status span.green { color: #00ff66; }
+    .status span.user { color: #00ff88; }
+    footer {
+      margin-top: 10px;
+      font-size: 0.75rem;
+      color: #aaa;
+    }
+    footer a {
+      color: crimson;
+      text-decoration: none;
+    }
+    #login-box {
+      position: relative; z-index: 2;
+      background: var(--card);
+      padding: 30px; border-radius: 18px;
+      width: 90%; max-width: 380px;
+      text-align: center; display: none;
+    }
+    #login-box input {
+      margin-bottom: 15px;
+    }
+    #login-box button {
+      background: var(--primary); border: none;
+      padding: 12px; width: 100%;
+      color: white; border-radius: 10px;
+      font-weight: bold; cursor: pointer;
+    }
+
+    /* Spinner */
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #fff;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* POPUP */
+    #popup {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      justify-content: center; align-items: center;
+      z-index: 999;
+    }
+    .popup-content {
+      background: #1a1a1a;
+      color: #00ff88;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px #00ff88;
+      text-align: center;
+      max-width: 90%;
+      position: relative;
+    }
+    .popup-content .close-btn {
+      position: absolute;
+      top: 10px; right: 15px;
+      font-size: 1.3rem; color: crimson;
+      cursor: pointer;
+    }
+
+    @media (max-width: 400px) {
+      .btn-group { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+<div id="particles-js"></div>
+
+<!-- POPUP -->
+<div id="popup">
+  <div class="popup-content">
+    <span class="close-btn" onclick="closePopup()">&times;</span>
+    <p id="popup-message"></p>
+  </div>
+</div>
+
+<!-- LOGIN BOX -->
+<div id="login-box">
+  <h1>Login</h1>
+  <input type="text" id="username" placeholder="Username" />
+  <input type="password" id="password" placeholder="Password" />
+  <button onclick="login()">Login</button>
+  <div id="login-result" style="margin-top:10px;"></div>
+</div>
+
+<!-- MAIN BOX -->
+<div class="container" id="main-box" style="display:none;">
+  <button class="logout" onclick="logout()">Logout</button>
+  <h1>Hefaistos Hades Api 👾</h1>
+  <input type="text" id="target" placeholder="Input your target number (62xxxxx)" />
+  <div class="btn-group">
+    <button class="btn" id="sendBtn" onclick="setBugType('crashtotal'); sendBug()">Fc Invisible</button>
+    <button class="btn" onclick="setBugType('delay'); sendBug()">Iphone Crash</button>
+  </div>
+  <div id="result" style="margin-top:10px;"></div>
+  <div class="status">
+    <p><b>Status:</b> Server Aktif <span class="green">🟢</span></p>
+    <p><b>Info:</b> Welcome, <span class="user" id="userLabel">cella</span>!</p>
+  </div>
+  <footer>
+    © Hefaistos Hades 2025<br>
+    <a href="https://t.me/hefaistos_channel" target="_blank">Support</a>
+  </footer>
+</div>
+
+<!-- PARTICLES -->
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script>
+particlesJS("particles-js", {
+  particles: {
+    number: { value: 40 },
+    color: { value: "#ffffff" },
+    shape: { type: "circle" },
+    opacity: { value: 0.3 },
+    size: { value: 2.5 },
+    line_linked: {
+      enable: true,
+      distance: 130,
+      color: "#ffffff",
+      opacity: 0.2,
+      width: 1
+    },
+    move: { enable: true, speed: 1 }
+  },
+  interactivity: {
+    events: {
+      onhover: { enable: true, mode: "grab" }
+    },
+    modes: {
+      grab: { distance: 140, line_linked: { opacity: 1 } }
+    }
+  },
+  retina_detect: true
+});
+</script>
+
+<!-- POPUP LOGIC -->
+<script>
+function showPopup(message) {
+  document.getElementById("popup-message").innerHTML = message;
+  document.getElementById("popup").style.display = "flex";
+}
+function closePopup() {
+  document.getElementById("popup").style.display = "none";
+}
+</script>
+
+<!-- LOGIN LOGIC -->
+<script>
+const BIN_ID = "685fb1f98561e97a502d53c1";
+const API_KEY = "$2a$10$aRQ6DFj97InHWwHpKCfc2ulda4ESN3Gd0pcp8d5s8D3clbfNj2Q0W";
+const headers = {
+  "Content-Type": "application/json",
+  "X-Master-Key": API_KEY
+};
+
+async function getUsers() {
+  const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
+  const data = await res.json();
+  return data.record;
+}
+
+function saveSession(user) {
+  sessionStorage.setItem("currentUser", JSON.stringify(user));
+}
+
+function getSession() {
+  return JSON.parse(sessionStorage.getItem("currentUser"));
+}
+
+function logout() {
+  sessionStorage.removeItem("currentUser");
+  location.reload();
+}
+
+function showDashboard(user) {
+  document.getElementById("login-box").style.display = "none";
+  document.getElementById("main-box").style.display = "block";
+  document.getElementById("userLabel").innerText = user.username;
+}
+
+window.onload = () => {
+  const user = getSession();
+  if (user) showDashboard(user);
+  else document.getElementById("login-box").style.display = "block";
+};
+
+async function login() {
+  const user = document.getElementById("username").value.trim();
+  const pass = document.getElementById("password").value.trim();
+  const result = document.getElementById("login-result");
+  const users = await getUsers();
+  const found = users.find(u => u.username === user && u.password === pass);
+  if (found) {
+    saveSession(found);
+    showDashboard(found);
+  } else {
+    result.innerText = "❌ Username atau Password salah!";
+    result.style.color = "crimson";
+  }
+}
+</script>
+
+<!-- API JS -->
+<script src="api.js"></script>
+</body>
+</html>
